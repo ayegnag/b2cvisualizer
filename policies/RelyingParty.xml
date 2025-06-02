@@ -1,0 +1,17 @@
+<TrustFrameworkPolicy>
+  <RelyingParty>
+    <DefaultUserJourney ReferenceId="SignUpOrSignin" />
+    <UserJourneys>
+      <UserJourney Id="SignUpOrSignin">
+        <OrchestrationSteps>
+          <OrchestrationStep Order="1">
+            <Type>ClaimsExchange</Type>
+            <ClaimsExchanges>
+              <ClaimsExchange TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+            </ClaimsExchanges>
+          </OrchestrationStep>
+        </OrchestrationSteps>
+      </UserJourney>
+    </UserJourneys>
+  </RelyingParty>
+</TrustFrameworkPolicy>

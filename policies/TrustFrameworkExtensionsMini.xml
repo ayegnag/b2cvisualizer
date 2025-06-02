@@ -1,0 +1,20 @@
+﻿ <TrustFrameworkPolicy>
+  <BuildingBlocks>
+    <ClaimsProviders>
+      <ClaimsProvider>
+        <TechnicalProfiles>
+          <TechnicalProfile Id="SelfAsserted-LocalAccountSignin-Email">
+            <DisplayName>Email sign-in</DisplayName>
+            <Protocol Name="None" />
+            <InputClaims>
+              <InputClaim ClaimTypeReferenceId="email" />
+            </InputClaims>
+            <OutputClaims>
+              <OutputClaim ClaimTypeReferenceId="displayName" />
+            </OutputClaims>
+          </TechnicalProfile>
+        </TechnicalProfiles>
+      </ClaimsProvider>
+    </ClaimsProviders>
+  </BuildingBlocks>
+</TrustFrameworkPolicy>
