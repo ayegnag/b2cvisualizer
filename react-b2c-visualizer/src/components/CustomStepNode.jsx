@@ -1,36 +1,8 @@
+import colorTools from "../utils/getColors.js";
+
 export default function CustomStepNode({ data }) {
-  const getStepColor = (stepType) => {
-    switch (stepType.toLowerCase()) {
-      case "claimsexchange":
-        return "bg-blue-100 border-blue-300";
-      case "combinedcheckout":
-        return "bg-green-100 border-green-300";
-      case "claimsproviderselection":
-        return "bg-purple-100 border-purple-300";
-      case "userinterface":
-        return "bg-yellow-100 border-yellow-300";
-      default:
-        return "bg-gray-100 border-gray-300";
-    }
-  };
-
-  const getProtocolBadgeColor = (protocol) => {
-    switch (protocol) {
-      case "OpenIdConnect":
-        return "bg-blue-500 text-white";
-      case "SAML2":
-        return "bg-green-500 text-white";
-      case "Proprietary":
-        return "bg-purple-500 text-white";
-      case "OAuth2":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-500 text-white";
-    }
-  };
-
   return (
-    <div className={`p-4 rounded-lg border-2 min-w-80 ${getStepColor(data.stepType)} shadow-md`}>
+    <div className={`p-4 rounded-lg border-2 min-w-80 ${colorTools.getStepColor(data.stepType)} shadow-md`}>
       <div className="font-bold text-lg mb-2">
         Step {data.order}: {data.stepType}
       </div>
@@ -45,7 +17,7 @@ export default function CustomStepNode({ data }) {
               {profile.displayName && <div className="text-sm text-gray-600 italic mb-2">{profile.displayName}</div>}
 
               <div className="flex flex-wrap gap-1 mb-2">
-                <span className={`text-xs px-2 py-1 rounded ${getProtocolBadgeColor(profile.protocol)}`}>{profile.protocol}</span>
+                <span className={`text-xs px-2 py-1 rounded ${colorTools.getProtocolBadgeColor(profile.protocol)}`}>{profile.protocol}</span>
                 {profile.isSelfAsserted && <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded">SelfAsserted</span>}
                 {profile.isRest && <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">REST API</span>}
               </div>
