@@ -89,6 +89,21 @@ function App() {
         .map((p) => p.getAttribute("TechnicalProfileReferenceId") || p.getAttribute("Id"))
         .filter(Boolean);
 
+      // Build contentDefinitionMap
+      const contentDefinitionMap = {};
+      for (const { xml } of [{ xml: relyingPartyXml?.xml }, { xml: extensionXml?.xml }, { xml: baseXml?.xml }]) {
+        if (!xml) continue;
+        const defs = findElementsByTag(xml, "ContentDefinition");
+        for (const def of defs) {
+          const id = def.getAttribute("Id");
+          const loadUri = findElementByTag(def, "LoadUri")?.textContent;
+          const dataUri = findElementByTag(def, "DataUri")?.textContent;
+          if (id) {
+            contentDefinitionMap[id] = { loadUri, dataUri };
+          }
+        }
+      }
+
       const resolvedProfiles = profileIds.map((id) => {
         const result = getTechProfileById(id);
         if (!result) return { id, notFound: true };
@@ -109,8 +124,18 @@ function App() {
         const isSelfAsserted = def.getAttribute("Id")?.includes("SelfAsserted");
         const metadataNodes = findElementsByTag(def, "Metadata");
         const isRest = protocol === "Proprietary" && metadataNodes?.length > 0;
-        const contentDef = findElementByTag(def, "ContentDefinitionReferenceId")?.textContent;
+        let contentDef = null;
+        const metadataItems = findElementsByTag(def, "Item");
+        for (const item of metadataItems) {
+          if (item.getAttribute("Key") === "ContentDefinitionReferenceId") {
+            contentDef = item.textContent;
+            break;
+          }
+        }
+
         const localizedRef = findElementsByTag(def, "LocalizedResourcesReference").map((l) => l.getAttribute("ReferenceId"));
+
+        const contentInfo = contentDef && contentDefinitionMap[contentDef] ? contentDefinitionMap[contentDef] : null;
 
         return {
           id,
@@ -125,6 +150,7 @@ function App() {
           conditions,
           contentDef,
           localizedRef,
+          contentInfo,
         };
       });
 
@@ -300,18 +326,28 @@ function App() {
                               </span>
                             )}
                             {selectedStep.hasConditions && (
-                              <div>
+                              <div className="text-sm">
                                 <strong>Conditions:</strong> {selectedStep.conditions.join(", ")}
                               </div>
                             )}
                             {tp.contentDef && (
-                              <div>
+                              <div className="text-sm">
                                 <strong>Template:</strong> {tp.contentDef}
                               </div>
                             )}
                             {tp.localizedRef?.length > 0 && (
-                              <div>
+                              <div className="text-sm">
                                 <strong>Localized Resources:</strong> {tp.localizedRef.join(", ")}
+                              </div>
+                            )}
+                            {tp.contentInfo?.loadUri && (
+                              <div className="text-sm wrap-break-word">
+                                <strong>LoadUri:</strong> {tp.contentInfo.loadUri}
+                              </div>
+                            )}
+                            {tp.contentInfo?.dataUri && (
+                              <div className="text-sm wrap-break-word">
+                                <strong>DataUri:</strong> {tp.contentInfo.dataUri}
                               </div>
                             )}
                           </div>
